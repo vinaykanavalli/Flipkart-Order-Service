@@ -29,25 +29,22 @@ src/main/java/com/shop/
 ├── delivery/      # Delivery tracking lifecycle handler, entity, & repository
 └── notification/  # Centralized event listener for customer notifications
 
-
-## LOGIC
-
 Customer → POST /orders → ORDER SERVICE
-                             │ ORDER_CREATED
-                             ▼
-                   Kafka: order-created ─────────────► NOTIFICATION SERVICE
-                             ▼
-                       PAYMENT SERVICE
-              ┌──────────────┴──────────────┐
-      PAYMENT_SUCCESS                  PAYMENT_FAILED
-              │                              │
-      Kafka: payment-success         Kafka: payment-failed ──► NOTIFICATION
-              │ ├──────────────────────────► NOTIFICATION
-              ▼
-       DELIVERY SERVICE (Ekart)
-              │ DELIVERY_CREATED        → delivery-created
-              │ DELIVERY_IN_TRANSIT     → delivery-in-transit
-              │ DELIVERY_OUT_FOR_DELIVERY → delivery-out-for-delivery
-              │ ORDER_DELIVERED         → order-delivered
-              ▼
-   NOTIFICATION SERVICE  +  ORDER SERVICE (updates order status)
+                        │ ORDER_CREATED
+                        ▼
+                Kafka: order-created ─────────────► NOTIFICATION SERVICE
+                        ▼
+                    PAYMENT SERVICE
+                ┌───────┴───────┐
+         PAYMENT_SUCCESS     PAYMENT_FAILED
+                │               │
+         Kafka: payment-success  Kafka: payment-failed ──► NOTIFICATION
+                │ ├────────────────────────► NOTIFICATION
+                ▼
+           DELIVERY SERVICE (Ekart)
+                │ DELIVERY_CREATED          → delivery-created
+                │ DELIVERY_IN_TRANSIT       → delivery-in-transit
+                │ DELIVERY_OUT_FOR_DELIVERY → delivery-out-for-delivery
+                │ ORDER_DELIVERED           → order-delivered
+                ▼
+        NOTIFICATION SERVICE  +  ORDER SERVICE (updates order status)
