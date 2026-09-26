@@ -28,7 +28,6 @@ public class DeliveryService {
         deliveryRepository.save(delivery);
 
         try {
-            // 1. Publish DELIVERY_CREATED
             Map<String, Object> createdMap = new HashMap<>();
             createdMap.put("eventId", "DEL-" + System.currentTimeMillis());
             createdMap.put("eventType", "DELIVERY_CREATED");
@@ -36,8 +35,6 @@ public class DeliveryService {
             createdMap.put("trackingNumber", trackingNo);
             createdMap.put("deliveryStatus", "CREATED");
             kafkaTemplate.send("delivery-created", orderKey, objectMapper.writeValueAsString(createdMap));
-
-            // 2. Simulate OUT_FOR_DELIVERY milestone
             Thread.sleep(5000);
             delivery.setDeliveryStatus("OUT_FOR_DELIVERY");
             deliveryRepository.save(delivery);
@@ -49,8 +46,6 @@ public class DeliveryService {
             outMap.put("trackingNumber", trackingNo);
             outMap.put("deliveryStatus", "OUT_FOR_DELIVERY");
             kafkaTemplate.send("delivery-events", orderKey, objectMapper.writeValueAsString(outMap));
-
-            // 3. Simulate DELIVERED milestone
             Thread.sleep(5000);
             delivery.setDeliveryStatus("DELIVERED");
             deliveryRepository.save(delivery);

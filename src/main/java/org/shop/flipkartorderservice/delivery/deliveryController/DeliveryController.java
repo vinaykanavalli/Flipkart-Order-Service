@@ -15,7 +15,7 @@ public class DeliveryController {
 
     @GetMapping("/{orderId}")
     public DeliveryResponse getDeliveryStatus(@PathVariable Long orderId) {
-        DeliveryEntity d = deliveryRepository.findAll().iterator().next();
+        DeliveryEntity d = deliveryRepository.findByOrderId(orderId);
         return new DeliveryResponse(d.getOrderId(), d.getTrackingNumber(), d.getDeliveryStatus());
     }
 }

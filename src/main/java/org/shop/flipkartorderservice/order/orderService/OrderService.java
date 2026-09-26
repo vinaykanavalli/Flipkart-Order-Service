@@ -28,7 +28,6 @@ public class OrderService {
         request.setStatus("CREATED");
         orderRepository.save(request);
 
-        try {
             Map<String, Object> eventMap = new HashMap<>();
             eventMap.put("eventId", "EVT-" + System.currentTimeMillis());
             eventMap.put("eventType", "ORDER_CREATED");
@@ -39,9 +38,6 @@ public class OrderService {
 
             String eventJson = objectMapper.writeValueAsString(eventMap);
             kafkaTemplate.send("order-created", String.valueOf(generatedOrderId), eventJson);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         return new OrderResponse(generatedOrderId, "CREATED");
     }
