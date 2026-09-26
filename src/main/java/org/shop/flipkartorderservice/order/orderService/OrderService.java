@@ -28,7 +28,7 @@ public class OrderService {
         request.setStatus("CREATED");
         orderRepository.save(request);
 
-            Map<String, Object> eventMap = new HashMap<>();
+            Map<String,Object> eventMap = new HashMap<>();
             eventMap.put("eventId", "EVT-" + System.currentTimeMillis());
             eventMap.put("eventType", "ORDER_CREATED");
             eventMap.put("orderId", generatedOrderId);

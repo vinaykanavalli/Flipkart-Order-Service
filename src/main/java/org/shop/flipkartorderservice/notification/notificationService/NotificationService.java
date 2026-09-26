@@ -1,7 +1,5 @@
 package org.shop.flipkartorderservice.notification.notificationService;
 
-
-
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.shop.flipkartorderservice.notification.notificationRepository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class NotificationService {
     @Autowired
-    private NotificationRepository notificationRepository;
+     NotificationRepository notificationRepository;
     @KafkaListener(topics = {"order-created", "payment-success", "payment-failed", "delivery-created", "delivery-events"}, groupId = "notification-group")
     public void handleNotifications(ConsumerRecord<String, String> record) {
         String topic = record.topic();

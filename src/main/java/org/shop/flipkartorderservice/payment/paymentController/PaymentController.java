@@ -14,7 +14,7 @@ public class PaymentController {
 
     @GetMapping("/{orderId}")
     public PaymentResponse getPaymentStatus(@PathVariable Long orderId) {
-        PaymentEntity payment = paymentRepository.findAll().iterator().next(); // simplified demo finder
+        PaymentEntity payment = paymentRepository.findByOrderId(orderId);
         return new PaymentResponse(payment.getOrderId(), payment.getPaymentStatus());
     }
 }

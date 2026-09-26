@@ -28,9 +28,10 @@ public class PaymentService {
 
     private Random random = new Random();
 
+
     @RetryableTopic(attempts = "3", backOff = @BackOff(delay = 2000L))
     @KafkaListener(topics = "order-created", groupId = "payment-group")
-    public void  processPayment(ConsumerRecord<String, String> record) {
+    public void processPayment(ConsumerRecord<String, String> record) {
         String orderKey = record.key();
         Long orderId = Long.valueOf(orderKey);
 
@@ -38,18 +39,23 @@ public class PaymentService {
             System.out.println("Payment already processed for Order ID: " + orderId);
             return ;
         }
+
+        Map<String, Object> userInput = objectMapper.readValue(record.value(), Map.class);//map.class will get raw json to java obj
+        Long customerId = Long.valueOf(userInput.get("customerId").toString());
+        double amount = Double.parseDouble(userInput.get("amount").toString());
+
         int checkRoll = random.nextInt(10);
         if (checkRoll == 0) throw new RuntimeException("Payment Gateway Simulation Error!");
         PaymentEntity payment = new PaymentEntity();
         payment.setOrderId(orderId);
-        payment.setAmount(75000);
+        payment.setAmount(amount);
 
-            Map<String, Object> map = new HashMap<>();
-            map.put("orderId", orderId);
-            map.put("customerId", 101);
-            map.put("amount", 75000);
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderId", orderId);
+        map.put("customerId", customerId);
+        map.put("amount", amount);
 
-            if (checkRoll > 1) {
+        if (checkRoll > 1) {
                 payment.setPaymentStatus("SUCCESS");
                 paymentRepository.save(payment);
                 map.put("eventType", "PAYMENT SUCCESS");
@@ -64,7 +70,6 @@ public class PaymentService {
             }
 
     }
-
     @DltHandler
     public void handleDlt(ConsumerRecord<String, String> record) {
         System.err.println("Payment DLT reached for: " + record.value() + " due to ");

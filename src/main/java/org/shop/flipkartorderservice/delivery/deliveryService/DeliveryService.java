@@ -12,9 +12,12 @@ import java.util.HashMap;
 import java.util.Map;
 @Service
 public class DeliveryService {
-    @Autowired private DeliveryRepository deliveryRepository;
-    @Autowired private KafkaTemplate<String, String> kafkaTemplate;
-    @Autowired private ObjectMapper objectMapper;
+    @Autowired
+     DeliveryRepository deliveryRepository;
+    @Autowired
+     KafkaTemplate<String, String> kafkaTemplate;
+    @Autowired
+     ObjectMapper objectMapper;
 
     @KafkaListener(topics = "payment-success", groupId = "delivery-group")
     public void consumePaymentSuccess(ConsumerRecord<String, String> record) {
